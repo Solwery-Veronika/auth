@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 )
 
