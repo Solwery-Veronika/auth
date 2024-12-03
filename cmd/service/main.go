@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log"
+	"net"
+
 	"github.com/Solwery-Veronika/auth/internal/rpc"
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 func main() {
