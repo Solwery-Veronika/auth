@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Solwery-Veronika/auth/internal/repository/local"
 	"log"
 	"net"
 
@@ -10,7 +11,9 @@ import (
 )
 
 func main() {
-	service := rpc.New()
+	repo := local.NewRepository()
+
+	service := rpc.New(repo)
 
 	grpcServer := grpc.NewServer()
 
