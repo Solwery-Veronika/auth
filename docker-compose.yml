@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  auth-db:
+    container_name: auth-db
+    image: postgres:15
+    environment:
+      POSTGRES_USER: master
+      POSTGRES_PASSWORD: master
+      POSTGRES_DB: master
+    ports:
+      - "3115:5432"
+    volumes:
+      - auth_db_data_veronika:/var/lib/postgresql/data
+
+volumes:
+  auth_db_data_veronika:

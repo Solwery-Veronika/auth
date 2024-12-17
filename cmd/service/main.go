@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Solwery-Veronika/auth/internal/repository/local"
+	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"log"
 	"net"
 
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	repo := local.NewRepository()
+	repo := postgres.NewRepository()
 
 	service := rpc.New(repo)
 
