@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+
 	"github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,7 +22,7 @@ func New(repo DbRepo) *Service {
 }
 
 func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, error) {
-	err := s.dbR.LoginUser(ctx, in.Username, in.Password)
+	err := s.dbR.LoginUser(ctx, in.Username, in.Password) // правильность пароля и логина
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -33,11 +34,11 @@ func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, 
 	tokenString, err := token.SignedString([]byte("secret"))
 	return &auth.LoginOut{
 		Token: tokenString,
-	}, nil
+	}, nil // создание токена и шифрование
 }
 
 func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.SignupResponse, error) {
-	err := s.dbR.SignupUser(ctx, in.Username, in.Password)
+	err := s.dbR.SignupUser(ctx, in.Username, in.Password) // err - ошибка от бд
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
