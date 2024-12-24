@@ -10,12 +10,11 @@ type Repository struct {
 }
 
 func NewRepository() *Repository {
-	storage := make(map[string]string)
-	return &Repository{storage: storage}
+	return &Repository{storage: make(map[string]string)} // инимциализация переменной
 }
 
 func (r *Repository) SignupUser(ctx context.Context, username string, password string) error {
-	_, ok := r.storage[username]
+	_, ok := r.storage[username] // проверяем есть ли имя в мапе
 	if ok {
 		return fmt.Errorf("username %s already exists", username)
 	}

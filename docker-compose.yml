@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  auth-db:
+  auth-db: 
     container_name: auth-db
     image: postgres:15
-    environment:
+    environment: 
       POSTGRES_USER: master
       POSTGRES_PASSWORD: master
       POSTGRES_DB: master
