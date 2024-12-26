@@ -22,6 +22,9 @@ func New(repo DbRepo) *Service {
 }
 
 func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, error) {
+	if len(in.Username) < 8 {
+		return nil, status.Error(codes.InvalidArgument, "username too short")
+	}
 	user, err := s.dbR.LoginUser(ctx, in.Username, in.Password) // правильность пароля и логина
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
