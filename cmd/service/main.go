@@ -1,10 +1,9 @@
 package main
 
 import (
+	"google.golang.org/grpc"
 	"log"
 	"net"
-
-	"google.golang.org/grpc"
 
 	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"github.com/Solwery-Veronika/auth/internal/rpc"
