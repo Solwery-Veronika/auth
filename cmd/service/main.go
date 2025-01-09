@@ -1,13 +1,13 @@
 package main
 
 import (
-	"google.golang.org/grpc"
 	"log"
 	"net"
 
 	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"github.com/Solwery-Veronika/auth/internal/rpc"
 	"github.com/Solwery-Veronika/auth/pkg/auth"
+	"google.golang.org/grpc"
 )
 
 func main() {

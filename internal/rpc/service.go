@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+
 	"github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
