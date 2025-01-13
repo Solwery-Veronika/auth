@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"log"
 	"net"
 
+	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"github.com/Solwery-Veronika/auth/internal/rpc"
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 	"google.golang.org/grpc"
@@ -23,5 +23,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	grpcServer.Serve(lis)
+	err = grpcServer.Serve(lis)
+	if err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

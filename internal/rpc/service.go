@@ -39,6 +39,9 @@ func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, 
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, data)
 	tokenString, err := token.SignedString([]byte("secret"))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
 	return &auth.LoginOut{
 		Token: tokenString,
 	}, nil // создание токена и шифрование
