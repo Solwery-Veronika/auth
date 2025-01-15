@@ -7,10 +7,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Solwery-Veronika/auth/internal/model"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+)
 
-	"github.com/Solwery-Veronika/auth/internal/rpc"
+var (
+	ErrUserExists = errors.New("user already exists")
 )
 
 type Repository struct {
@@ -29,9 +32,22 @@ func NewRepository() *Repository {
 }
 
 func (r *Repository) SignupUser(ctx context.Context, username string, password string) error {
-	query := `INSERT INTO participants (username, password) VALUES ($1, $2)` // запрос
+	query := `SELECT true FROM participants WHERE username = $1`
 
-	_, err := r.conn.ExecContext(ctx, query, username, password)
+	var exists bool
+
+	err := r.conn.GetContext(ctx, &exists, query, username)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return fmt.Errorf("failed to get user: %w", err)
+	}
+
+	if exists {
+		return ErrUserExists
+	}
+
+	query = `INSERT INTO participants (username, password) VALUES ($1, $2)` // запрос
+
+	_, err = r.conn.ExecContext(ctx, query, username, password)
 	if err != nil {
 		return fmt.Errorf("failed to insert new user: %w", err)
 	}
@@ -42,7 +58,7 @@ type user struct {
 	Password string `db:"password"`
 }
 
-func (r *Repository) LoginUser(ctx context.Context, username string, password string) (rpc.User, error) {
+func (r *Repository) LoginUser(ctx context.Context, username string, password string) (model.User, error) {
 	query := `SELECT password FROM participants WHERE username = $1`
 
 	var user user
@@ -50,13 +66,13 @@ func (r *Repository) LoginUser(ctx context.Context, username string, password st
 	err := r.conn.Get(&user, query, username) // заполнение структуры результатом запроса
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return rpc.User{}, fmt.Errorf("user not found")
+			return model.User{}, fmt.Errorf("user not found")
 		}
 
-		return rpc.User{}, fmt.Errorf("failed to get user: %w", err)
+		return model.User{}, fmt.Errorf("failed to get user: %w", err)
 	}
 
-	return rpc.User{
+	return model.User{
 		Password: user.Password,
 	}, nil
 }
