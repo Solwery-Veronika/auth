@@ -8,8 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	"github.com/Solwery-Veronika/auth/internal/model"
-
+	model "github.com/Solwery-Veronika/auth/internal/model"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,33 +35,19 @@ func (m *MockDbRepo) EXPECT() *MockDbRepoMockRecorder {
 	return m.recorder
 }
 
-// LoginUser mocks base method.
-func (m *MockDbRepo) LoginUser(ctx context.Context, username, password string) (model.User, error) {
+// RegisterUser mocks base method.
+func (m *MockDbRepo) RegisterUser(ctx context.Context, username, email, password string) (model.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LoginUser", ctx, username, password)
+	ret := m.ctrl.Call(m, "RegisterUser", ctx, username, email, password)
 	ret0, _ := ret[0].(model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// LoginUser indicates an expected call of LoginUser.
-func (mr *MockDbRepoMockRecorder) LoginUser(ctx, username, password interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginUser", reflect.TypeOf((*MockDbRepo)(nil).LoginUser), ctx, username, password)
-}
-
-// RegisterUser mocks base method.
-func (m *MockDbRepo) RegisterUser(ctx context.Context, email, password string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RegisterUser", ctx, email, password)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
 // RegisterUser indicates an expected call of RegisterUser.
-func (mr *MockDbRepoMockRecorder) RegisterUser(ctx, email, password interface{}) *gomock.Call {
+func (mr *MockDbRepoMockRecorder) RegisterUser(ctx, username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUser", reflect.TypeOf((*MockDbRepo)(nil).RegisterUser), ctx, email, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUser", reflect.TypeOf((*MockDbRepo)(nil).RegisterUser), ctx, username, email, password)
 }
 
 // SignupUser mocks base method.
