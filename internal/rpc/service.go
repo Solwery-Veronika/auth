@@ -2,6 +2,9 @@ package rpc
 
 import (
 	"context"
+	"errors"
+
+	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 
 	"github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
@@ -49,11 +52,15 @@ func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, 
 
 func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.SignupResponse, error) {
 	err := s.dbR.SignupUser(ctx, in.Username, in.Password) // err - ошибка от бд
+	success := true
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		if !errors.Is(err, postgres.ErrUserExists) {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		success = false
 	}
 	return &auth.SignupResponse{
-		Success: true,
+		Success: success,
 	}, nil
 }
 

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/Solwery-Veronika/auth/internal/model"
+
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +22,7 @@ func TestService_Login(t *testing.T) {
 			Password: "testtest",
 		}
 		ctx := context.Background()
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Password).Return(User{Password: in.Password}, nil)
+		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Password).Return(model.User{Password: in.Password}, nil)
 
 		srv := New(mockRepo)
 		_, err := srv.Login(ctx, &in)
@@ -34,7 +36,7 @@ func TestService_Login(t *testing.T) {
 			Password: "testtest",
 		}
 		ctx := context.Background()
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Password).Return(User{Password: in.Password}, mockErr)
+		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Password).Return(model.User{Password: in.Password}, mockErr)
 
 		srv := New(mockRepo)
 		_, err := srv.Login(ctx, &in)
@@ -48,7 +50,7 @@ func TestService_Login(t *testing.T) {
 			Password: "testtest",
 		}
 		ctx := context.Background()
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Password).Return(User{Password: "123"}, nil)
+		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Password).Return(model.User{Password: "123"}, nil)
 
 		srv := New(mockRepo)
 		_, err := srv.Login(ctx, &in)

@@ -8,6 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
+	"github.com/Solwery-Veronika/auth/internal/model"
+
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,10 +37,10 @@ func (m *MockDbRepo) EXPECT() *MockDbRepoMockRecorder {
 }
 
 // LoginUser mocks base method.
-func (m *MockDbRepo) LoginUser(ctx context.Context, username, password string) (User, error) {
+func (m *MockDbRepo) LoginUser(ctx context.Context, username, password string) (model.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoginUser", ctx, username, password)
-	ret0, _ := ret[0].(User)
+	ret0, _ := ret[0].(model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
