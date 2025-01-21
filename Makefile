@@ -1,0 +1,3 @@
+gen:
+	export PATH=$PATH:$(go env GOPATH)/bin 
+	go generate ./...

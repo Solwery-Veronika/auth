@@ -11,5 +11,5 @@ type DbRepo interface {
 	SignupUser(ctx context.Context, username string, password string) error
 	// LoginUser(ctx context.Context, username string, password string) (model.User, error)
 	// RegisterUser(ctx context.Context, email string, password string) error
-	RegisterUser(ctx context.Context, username string, email string, password string) (model.User, error)
+	LoginUser(ctx context.Context, username string, email string, password string) (model.User, error)
 }

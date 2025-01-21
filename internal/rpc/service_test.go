@@ -44,37 +44,37 @@ func TestService_Signup(t *testing.T) {
 	})
 }
 
-func TestService_RegisterUser(t *testing.T) {
+func TestService_Login(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockRepo := NewMockDbRepo(ctrl)
 
 	t.Run("ok", func(t *testing.T) {
-		in := auth.RegisterRequest{
+		in := auth.LoginIn{
 			Username: "testtest",
 			Email:    "testtest",
 			Password: "testtest",
 		}
 		ctx := context.Background()
-		mockRepo.EXPECT().RegisterUser(gomock.Any(), in.Username, in.Email, in.Password).Return(model.User{Password: "123"}, nil)
+		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Email, in.Password).Return(model.User{Password: "123"}, nil)
 
 		srv := New(mockRepo)
-		_, err := srv.Register(ctx, &in)
+		_, err := srv.Login(ctx, &in)
 		assert.ErrorContains(t, err, "invalid password")
 		assert.Error(t, err)
 	})
 
 	t.Run("fail_request_error", func(t *testing.T) {
 		mockErr := errors.New("mock error")
-		in := auth.RegisterRequest{
+		in := auth.LoginIn{
 			Username: "testtest",
 			Email:    "testtest",
 			Password: "testtest",
 		}
 		ctx := context.Background()
-		mockRepo.EXPECT().RegisterUser(gomock.Any(), in.Username, in.Email, in.Password).Return(model.User{Password: in.Password}, mockErr)
+		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Email, in.Password).Return(model.User{Password: in.Password}, mockErr)
 
 		srv := New(mockRepo)
-		_, err := srv.Register(ctx, &in)
+		_, err := srv.Login(ctx, &in)
 		assert.ErrorContains(t, err, mockErr.Error())
 		assert.Error(t, err)
 	})

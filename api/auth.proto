@@ -6,17 +6,17 @@ option go_package = "./auth";
 service AuthService {
   // rpc Login(LoginIn) returns (LoginOut) {};
   rpc Signup(SignupRequest) returns (SignupResponse) {};
-  rpc Register(RegisterRequest) returns(RegisterResponse) {};
+  rpc Login(LoginIn) returns(LoginOut) {};
   // rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse){};
 }
 
-message RegisterRequest{
+message LoginIn{
   string username = 1;
   string email = 2; 
   string password = 3;
 
 }
-message RegisterResponse{
+message LoginOut{
   string token = 1;
 }
 

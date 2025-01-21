@@ -56,26 +56,7 @@ type user struct {
 	Password string `db:"password"`
 }
 
-// func (r *Repository) LoginUser(ctx context.Context, username string, password string) (model.User, error) {
-// 	query := `SELECT password FROM participants WHERE username = $1`
-
-// 	var user user
-
-// 	err := r.conn.Get(&user, query, username) // заполнение структуры результатом запроса
-// 	if err != nil {
-// 		if errors.Is(err, sql.ErrNoRows) {
-// 			return model.User{}, fmt.Errorf("user not found")
-// 		}
-
-// 		return model.User{}, fmt.Errorf("failed to get user: %w", err)
-// 	}
-
-// 	return model.User{
-// 		Password: user.Password,
-// 	}, nil
-// }
-
-func (r *Repository) RegisterUser(ctx context.Context, username string, email string, password string) (model.User, error) {
+func (r *Repository) LoginUser(ctx context.Context, username string, email string, password string) (model.User, error) {
 	query := `SELECT true FROM participants WHERE = $1`
 	var user user
 	var exists bool
