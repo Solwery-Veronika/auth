@@ -4,19 +4,30 @@ syntax = "proto3";
 option go_package = "./auth";
 
 service AuthService {
-  rpc Login(LoginIn) returns (LoginOut) {};
+  // rpc Login(LoginIn) returns (LoginOut) {};
   rpc Signup(SignupRequest) returns (SignupResponse) {};
-  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse){};
+  rpc Login(LoginIn) returns(LoginOut) {};
+  // rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse){};
 }
 
-message LoginIn {
+message LoginIn{
   string username = 1;
-  string password = 2;
-}
+  string email = 2; 
+  string password = 3;
 
-message LoginOut {
+}
+message LoginOut{
   string token = 1;
 }
+
+// message LoginIn {
+//   string username = 1;
+//   string password = 2;
+// }
+
+// message LoginOut {
+//   string token = 1;
+// }
 
 //Signup
 message SignupRequest{
@@ -29,11 +40,11 @@ message SignupResponse{
 }
 
 //RegisterUser
-message RegisterUserRequest{
-  string email = 1; 
-  string password = 2; 
-}
+// message RegisterUserRequest{
+//   string email = 1; 
+//   string password = 2; 
+// }
 
-message RegisterUserResponse{
-  bool success = 1;
-}
+// message RegisterUserResponse{
+//   bool success = 1;
+// }

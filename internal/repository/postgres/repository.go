@@ -12,9 +12,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var (
-	ErrUserExists = errors.New("user already exists")
-)
+var ErrUserExists = errors.New("user already exists")
 
 type Repository struct {
 	conn *sqlx.DB
@@ -58,45 +56,28 @@ type user struct {
 	Password string `db:"password"`
 }
 
-func (r *Repository) LoginUser(ctx context.Context, username string, password string) (model.User, error) {
-	query := `SELECT password FROM participants WHERE username = $1`
-
+func (r *Repository) LoginUser(ctx context.Context, username string, email string, password string) (model.User, error) {
+	query := `SELECT true FROM participants WHERE = $1`
 	var user user
+	var exists bool
 
-	err := r.conn.Get(&user, query, username) // заполнение структуры результатом запроса
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return model.User{}, fmt.Errorf("user not found")
-		}
-
+	err := r.conn.GetContext(ctx, &exists, query, username, email)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return model.User{}, fmt.Errorf("failed to get user: %w", err)
+	}
+
+	if exists {
+		return model.User{}, fmt.Errorf("user already exists")
+	}
+
+	// Добавляем нового пользователя в базу данных
+	queryInsert := `INSERT INTO participants (username, email, password) VALUES ($1, $2);`
+	_, err = r.conn.ExecContext(ctx, queryInsert, username, email, password)
+	if err != nil {
+		return model.User{}, fmt.Errorf("failed to insert user: %w", err)
 	}
 
 	return model.User{
 		Password: user.Password,
 	}, nil
-}
-
-func (r *Repository) RegisterUser(ctx context.Context, email string, password string) error {
-	query := `SELECT true FROM participants WHERE email = $1`
-
-	var exists bool
-
-	err := r.conn.GetContext(ctx, &exists, query, email)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("failed to get user: %w", err)
-	}
-
-	if exists {
-		return fmt.Errorf("user already exists")
-	}
-
-	// Добавляем нового пользователя в базу данных
-	queryInsert := `INSERT INTO participants (email, password) VALUES ($1, $2);`
-	_, err = r.conn.ExecContext(ctx, queryInsert, email, password)
-	if err != nil {
-		return fmt.Errorf("failed to insert user: %w", err)
-	}
-
-	return nil
 }
