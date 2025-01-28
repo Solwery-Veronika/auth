@@ -4,23 +4,25 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
-
 	"github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/Solwery-Veronika/auth/internal/config"
+	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 )
 
 type Service struct {
 	auth.UnimplementedAuthServiceServer
-	dbR DbRepo
+	dbR         DbRepo
+	secretToken string
 }
 
-func New(repo DbRepo) *Service {
+func New(cfg *config.Config, repo DbRepo) *Service {
 	return &Service{
-		dbR: repo,
+		dbR:         repo,
+		secretToken: cfg.Platform.Secret,
 	}
 }
 
@@ -42,7 +44,7 @@ func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, 
 		"email":    in.Email,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, data)
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString([]byte(s.secretToken))
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

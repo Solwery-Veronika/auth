@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/Solwery-Veronika/auth/internal/config"
 	"github.com/Solwery-Veronika/auth/internal/model"
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 	"github.com/golang/mock/gomock"
@@ -14,6 +15,7 @@ import (
 func TestService_Signup(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockRepo := NewMockDbRepo(ctrl)
+	cfg := &config.Config{}
 
 	t.Run("ok", func(t *testing.T) {
 		in := auth.SignupRequest{
@@ -23,7 +25,7 @@ func TestService_Signup(t *testing.T) {
 		ctx := context.Background()
 		mockRepo.EXPECT().SignupUser(gomock.Any(), in.Username, in.Password).Return(nil)
 
-		srv := New(mockRepo)
+		srv := New(cfg, mockRepo)
 		_, err := srv.Signup(ctx, &in)
 		assert.NoError(t, err)
 	})
@@ -37,7 +39,7 @@ func TestService_Signup(t *testing.T) {
 		ctx := context.Background()
 		mockRepo.EXPECT().SignupUser(gomock.Any(), in.Username, in.Password).Return(mockErr)
 
-		srv := New(mockRepo)
+		srv := New(cfg, mockRepo)
 		_, err := srv.Signup(ctx, &in)
 		assert.ErrorContains(t, err, mockErr.Error())
 		assert.Error(t, err)
@@ -47,6 +49,7 @@ func TestService_Signup(t *testing.T) {
 func TestService_Login(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockRepo := NewMockDbRepo(ctrl)
+	cfg := &config.Config{}
 
 	t.Run("ok", func(t *testing.T) {
 		in := auth.LoginIn{
@@ -57,7 +60,7 @@ func TestService_Login(t *testing.T) {
 		ctx := context.Background()
 		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Email, in.Password).Return(model.User{Password: "123"}, nil)
 
-		srv := New(mockRepo)
+		srv := New(cfg, mockRepo)
 		_, err := srv.Login(ctx, &in)
 		assert.ErrorContains(t, err, "invalid password")
 		assert.Error(t, err)
@@ -73,7 +76,7 @@ func TestService_Login(t *testing.T) {
 		ctx := context.Background()
 		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, in.Email, in.Password).Return(model.User{Password: in.Password}, mockErr)
 
-		srv := New(mockRepo)
+		srv := New(cfg, mockRepo)
 		_, err := srv.Login(ctx, &in)
 		assert.ErrorContains(t, err, mockErr.Error())
 		assert.Error(t, err)
