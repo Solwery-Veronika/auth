@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Solwery-Veronika/auth/internal/config"
 	"github.com/Solwery-Veronika/auth/internal/model"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -18,9 +19,9 @@ type Repository struct {
 	conn *sqlx.DB
 }
 
-func NewRepository() *Repository {
+func NewRepository(cfg *config.Config) *Repository {
 	connectCmd := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
-		"master", "master", "master", "localhost", "3115") // строка для подключения к pg
+		cfg.Postgres.User, cfg.Postgres.Password, cfg.Postgres.Database, cfg.Postgres.Host, cfg.Postgres.Port) // строка для подключения к pg
 
 	conn, err := sqlx.Connect("postgres", connectCmd) // подключаемся к бд
 	if err != nil {
@@ -57,7 +58,7 @@ type user struct {
 }
 
 func (r *Repository) LoginUser(ctx context.Context, username string, email string, password string) (model.User, error) {
-	query := `SELECT true FROM participants WHERE = $1`
+	query := `SELECT true FROM participants WHERE username = $1`
 	var user user
 	var exists bool
 
