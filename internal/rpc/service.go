@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
@@ -57,6 +58,7 @@ func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, 
 }
 
 func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.SignupResponse, error) {
+	log.Println("signup work")
 	err := s.dbR.SignupUser(ctx, in.Username, in.Password) // err - ошибка от бд
 	success := true
 	if err != nil {
@@ -74,6 +76,6 @@ func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.Sig
 	}
 
 	return &auth.SignupResponse{
-		Success: success || res.Success,
+		Success: success && res.Success,
 	}, nil
 }
