@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	model "github.com/Solwery-Veronika/auth/internal/model"
+	user "github.com/Solwery-Veronika/user/pkg/user"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -62,4 +63,42 @@ func (m *MockDbRepo) SignupUser(ctx context.Context, username, password string) 
 func (mr *MockDbRepoMockRecorder) SignupUser(ctx, username, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignupUser", reflect.TypeOf((*MockDbRepo)(nil).SignupUser), ctx, username, password)
+}
+
+// MockUserC is a mock of UserC interface.
+type MockUserC struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserCMockRecorder
+}
+
+// MockUserCMockRecorder is the mock recorder for MockUserC.
+type MockUserCMockRecorder struct {
+	mock *MockUserC
+}
+
+// NewMockUserC creates a new mock instance.
+func NewMockUserC(ctrl *gomock.Controller) *MockUserC {
+	mock := &MockUserC{ctrl: ctrl}
+	mock.recorder = &MockUserCMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserC) EXPECT() *MockUserCMockRecorder {
+	return m.recorder
+}
+
+// CreateUser mocks base method.
+func (m *MockUserC) CreateUser(ctx context.Context, data model.CreateUserData) (*user.CreateUserOut, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUser", ctx, data)
+	ret0, _ := ret[0].(*user.CreateUserOut)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateUser indicates an expected call of CreateUser.
+func (mr *MockUserCMockRecorder) CreateUser(ctx, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserC)(nil).CreateUser), ctx, data)
 }
