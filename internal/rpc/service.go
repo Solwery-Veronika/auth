@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/Solwery-Veronika/auth/internal/config"
+	"github.com/Solwery-Veronika/auth/internal/model"
 	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"github.com/Solwery-Veronika/auth/pkg/auth"
 )
@@ -17,12 +18,14 @@ type Service struct {
 	auth.UnimplementedAuthServiceServer
 	dbR         DbRepo
 	secretToken string
+	uC          UserC
 }
 
-func New(cfg *config.Config, repo DbRepo) *Service {
+func New(cfg *config.Config, repo DbRepo, uC UserC) *Service {
 	return &Service{
 		dbR:         repo,
 		secretToken: cfg.Platform.Secret,
+		uC:          uC,
 	}
 }
 
@@ -62,7 +65,15 @@ func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.Sig
 		}
 		success = false
 	}
+
+	res, err := s.uC.CreateUser(ctx, model.CreateUserData{
+		Username: in.Username,
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
 	return &auth.SignupResponse{
-		Success: success,
+		Success: success || res.Success,
 	}, nil
 }

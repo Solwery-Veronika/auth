@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/Solwery-Veronika/auth/internal/client"
 	"github.com/Solwery-Veronika/auth/internal/config"
 	"github.com/Solwery-Veronika/auth/internal/repository/postgres"
 	"github.com/Solwery-Veronika/auth/internal/rpc"
@@ -16,7 +17,9 @@ func main() {
 	cfg := config.MustLoad()
 	repo := postgres.NewRepository(cfg)
 
-	service := rpc.New(cfg, repo)
+	userClient := client.New(cfg)
+
+	service := rpc.New(cfg, repo, userClient)
 
 	grpcServer := grpc.NewServer()
 

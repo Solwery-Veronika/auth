@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Postgres Postgres
-	Platform Platform
-	Service  Service
+	Postgres    Postgres
+	Platform    Platform
+	Service     Service
+	UserService UserService
 }
 
 type Postgres struct {
@@ -26,6 +27,10 @@ type Platform struct {
 
 type Service struct {
 	Port string `env:"AUTH_SERVICE_PORT"`
+}
+type UserService struct {
+	Host string `env:"USER_SERVICE_HOST"`
+	Port string `env:"USER_SERVICE_PORT"`
 }
 
 func MustLoad() *Config {
