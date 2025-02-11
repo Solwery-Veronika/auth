@@ -10,7 +10,9 @@ type Repository struct {
 }
 
 func NewRepository() *Repository {
-	return &Repository{storage: make(map[string]string)} // инимциализация переменной
+	return &Repository{
+		storage: make(map[string]string),
+	} // инимциализация переменной
 }
 
 func (r *Repository) SignupUser(ctx context.Context, username string, password string) error {
