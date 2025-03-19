@@ -9,9 +9,15 @@ services:
       POSTGRES_PASSWORD: master
       POSTGRES_DB: master
     ports:
-      - "3115:5432"
+      - "3116:5432"
     volumes:
       - auth_db_data_veronika:/var/lib/postgresql/data
-
+    networks:
+      - veronika-network
 volumes:
   auth_db_data_veronika:
+
+
+networks:
+    veronika-network:
+      external: true
