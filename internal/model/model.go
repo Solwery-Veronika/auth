@@ -6,3 +6,6 @@ type User struct {
 type CreateUserData struct {
 	Username string
 }
+type ChangeUser struct {
+	NewUsername string
+}

@@ -82,3 +82,36 @@ func (r *Repository) LoginUser(ctx context.Context, username string, email strin
 		Password: user.Password,
 	}, nil
 }
+
+func (r *Repository) ChangeLogin(ctx context.Context, username, password, newUsername string) (model.ChangeUser, error) {
+	// Проверяем, существует ли пользователь с таким логином и паролем
+	var userID int
+	query := "SELECT id FROM users WHERE username = $1 AND password = $2"
+	err := r.conn.QueryRowContext(ctx, query, username, password).Scan(&userID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return model.ChangeUser{}, errors.New("invalid username or password")
+		}
+		return model.ChangeUser{}, err
+	}
+
+	// Проверяем, что новый логин свободен
+	var exists int
+	query = "SELECT COUNT(*) FROM users WHERE username = $1"
+	err = r.conn.QueryRowContext(ctx, query, newUsername).Scan(&exists)
+	if err != nil {
+		return model.ChangeUser{}, err
+	}
+	if exists > 0 {
+		return model.ChangeUser{}, errors.New("username already taken")
+	}
+
+	// Обновляем логин
+	query = "UPDATE users SET username = $1 WHERE id = $2"
+	_, err = r.conn.ExecContext(ctx, query, newUsername, userID)
+	if err != nil {
+		return model.ChangeUser{}, err
+	}
+
+	return model.ChangeUser{NewUsername: newUsername}, nil
+}

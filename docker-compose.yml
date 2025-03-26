@@ -14,10 +14,42 @@ services:
       - auth_db_data_veronika:/var/lib/postgresql/data
     networks:
       - veronika-network
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - veronika-network
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "test.send.databus:1:1"
+    depends_on:
+      - zookeeper
+    networks:
+      - veronika-network
+    volumes:
+      - kafka_data:/var/lib/kafka/data
 volumes:
   auth_db_data_veronika:
+  kafka_data:
 
 
 networks:
     veronika-network:
       external: true
+
+  
