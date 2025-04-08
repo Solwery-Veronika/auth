@@ -13,6 +13,7 @@ type DbRepo interface {
 	LoginUser(ctx context.Context, username string, email string, password string) (model.User, error)
 	ChangeLogin(ctx context.Context, username string, password string, newUsername string) (model.ChangeUser, error)
 }
+
 type UserC interface {
 	CreateUser(ctx context.Context, data model.CreateUserData) (*user.CreateUserOut, error)
 }

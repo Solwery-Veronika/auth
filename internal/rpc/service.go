@@ -81,17 +81,7 @@ func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.Sig
 }
 
 func (s *Service) ChangeLogin(ctx context.Context, in *auth.ChangeLoginIn) (*auth.ChangeLoginOut, error) {
-	_, err := s.dbR.LoginUser(ctx, in.Username, "", in.Password)
-	if err != nil {
-		return &auth.ChangeLoginOut{Success: false}, status.Error(codes.Unauthenticated, "invalid username or password")
-	}
-	// Проверяем, что новый логин не занят
-	_, err = s.dbR.LoginUser(ctx, in.NewUsername, "", "") // Проверяем, есть ли пользователь с таким логином
-	if err == nil {                                       // Если запрос не вернул ошибку, значит логин занят
-		return &auth.ChangeLoginOut{Success: false}, status.Error(codes.AlreadyExists, "username already taken")
-	}
-	// Обновляем логин пользователя
-	_, err = s.dbR.ChangeLogin(ctx, in.Username, in.Password, in.NewUsername)
+	_, err := s.dbR.ChangeLogin(ctx, in.Username, in.Password, in.NewUsername)
 	if err != nil {
 		return &auth.ChangeLoginOut{Success: false}, status.Error(codes.Internal, err.Error())
 	}
