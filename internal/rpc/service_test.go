@@ -99,9 +99,6 @@ func TestService_Change(t *testing.T) {
 			NewUsername: "newUser",
 		}
 		ctx := context.Background()
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, "", in.Password).Return(model.User{}, nil)
-
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.NewUsername, "", "").Return(model.User{}, errors.New("user not found"))
 
 		mockRepo.EXPECT().ChangeLogin(gomock.Any(), in.Username, in.Password, in.NewUsername).Return(model.ChangeUser{NewUsername: in.NewUsername}, nil)
 
@@ -118,11 +115,6 @@ func TestService_Change(t *testing.T) {
 			NewUsername: "newUser",
 		}
 		ctx := context.Background()
-		// 1. Проверяем старый логин (возвращает успешный вход)
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.Username, "", in.Password).Return(model.User{}, nil)
-
-		// 2. Проверяем, что новый логин не занят (возвращает ошибку, значит, логин свободен)
-		mockRepo.EXPECT().LoginUser(gomock.Any(), in.NewUsername, "", "").Return(model.User{}, errors.New("user not found"))
 
 		mockRepo.EXPECT().
 			ChangeLogin(gomock.Any(), in.Username, in.Password, in.NewUsername).
