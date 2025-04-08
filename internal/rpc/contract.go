@@ -15,3 +15,7 @@ type DbRepo interface {
 type UserC interface {
 	CreateUser(ctx context.Context, data model.CreateUserData) (*user.CreateUserOut, error)
 }
+
+type KafkaProducerService interface {
+	SendUserChangedLogin(ctx context.Context, username string) error
+}
