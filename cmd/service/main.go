@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Solwery-Veronika/auth/internal/databus/user_change_login"
 	"log"
 	"net"
 
@@ -16,10 +17,15 @@ import (
 func main() {
 	cfg := config.MustLoad()
 	repo := postgres.NewRepository(cfg)
+	kafkaProducer := user_change_login.New()
+	//err := kafkaProducer.SendUserChangedLogin(context.Background(), "test 2")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	userClient := client.New(cfg)
 
-	service := rpc.New(cfg, repo, userClient)
+	service := rpc.New(cfg, repo, userClient, kafkaProducer)
 
 	grpcServer := grpc.NewServer()
 

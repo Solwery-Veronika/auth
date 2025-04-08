@@ -20,13 +20,15 @@ type Service struct {
 	dbR         DbRepo
 	secretToken string
 	uC          UserC
+	kpS         KafkaProducerService
 }
 
-func New(cfg *config.Config, repo DbRepo, uC UserC) *Service {
+func New(cfg *config.Config, repo DbRepo, uC UserC, kpS KafkaProducerService) *Service {
 	return &Service{
 		dbR:         repo,
 		secretToken: cfg.Platform.Secret,
 		uC:          uC,
+		kpS:         kpS,
 	}
 }
 
@@ -78,4 +80,17 @@ func (s *Service) Signup(ctx context.Context, in *auth.SignupRequest) (*auth.Sig
 	return &auth.SignupResponse{
 		Success: success && res.Success,
 	}, nil
+}
+
+func (s *Service) ChangeLogin(ctx context.Context, in *auth.ChangeLoginIn) (*auth.ChangeLoginOut, error) {
+	_, err := s.dbR.ChangeLogin(ctx, in.Username, in.Password, in.NewUsername)
+	if err != nil {
+		return &auth.ChangeLoginOut{Success: false}, status.Error(codes.Internal, err.Error())
+	}
+	err = s.kpS.SendUserChangedLogin(ctx, in.NewUsername)
+	if err != nil {
+		return &auth.ChangeLoginOut{Success: false}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &auth.ChangeLoginOut{Success: true}, nil
 }
