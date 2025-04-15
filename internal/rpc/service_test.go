@@ -85,3 +85,46 @@ func TestService_Login(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestService_Change(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockRepo := NewMockDbRepo(ctrl)
+	mockUser := NewMockUserC(ctrl)
+	cfg := &config.Config{}
+
+	t.Run("ok", func(t *testing.T) {
+		in := auth.ChangeLoginIn{
+			Username:    "testtest",
+			Password:    "testtest",
+			NewUsername: "newUser",
+		}
+		ctx := context.Background()
+
+		mockRepo.EXPECT().ChangeLogin(gomock.Any(), in.Username, in.Password, in.NewUsername).Return(model.ChangeUser{NewUsername: in.NewUsername}, nil)
+
+		srv := New(cfg, mockRepo, mockUser)
+		_, err := srv.ChangeLogin(ctx, &in)
+		assert.NoError(t, err)
+	})
+
+	t.Run("fail_request_error", func(t *testing.T) {
+		mockErr := errors.New("mock error")
+		in := auth.ChangeLoginIn{
+			Username:    "testtest",
+			Password:    "testtest",
+			NewUsername: "newUser",
+		}
+		ctx := context.Background()
+
+		mockRepo.EXPECT().
+			ChangeLogin(gomock.Any(), in.Username, in.Password, in.NewUsername).
+			Return(model.ChangeUser{}, mockErr)
+
+		srv := New(cfg, mockRepo, mockUser)
+		_, err := srv.ChangeLogin(ctx, &in)
+
+		// Проверяем, что ошибка присутствует
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, mockErr.Error()) // Проверяем, что текст ошибки совпадает
+	})
+}

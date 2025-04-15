@@ -36,6 +36,21 @@ func (m *MockDbRepo) EXPECT() *MockDbRepoMockRecorder {
 	return m.recorder
 }
 
+// ChangeLogin mocks base method.
+func (m *MockDbRepo) ChangeLogin(ctx context.Context, username, password, newUsername string) (model.ChangeUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ChangeLogin", ctx, username, password, newUsername)
+	ret0, _ := ret[0].(model.ChangeUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ChangeLogin indicates an expected call of ChangeLogin.
+func (mr *MockDbRepoMockRecorder) ChangeLogin(ctx, username, password, newUsername interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChangeLogin", reflect.TypeOf((*MockDbRepo)(nil).ChangeLogin), ctx, username, password, newUsername)
+}
+
 // LoginUser mocks base method.
 func (m *MockDbRepo) LoginUser(ctx context.Context, username, email, password string) (model.User, error) {
 	m.ctrl.T.Helper()
