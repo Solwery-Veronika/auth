@@ -32,7 +32,7 @@ func New(cfg *config.Config, repo DbRepo, uC UserC) *Service {
 
 func (s *Service) Login(ctx context.Context, in *auth.LoginIn) (*auth.LoginOut, error) {
 	if len(in.Username) < 8 {
-		return nil, status.Error(codes.InvalidArgument, "username too short")
+		return nil, status.Error(codes.InvalidArgument, "username too short") // код ошибки и текст
 	}
 	user, err := s.dbR.LoginUser(ctx, in.Username, in.Email, in.Password) // правильность пароля и логина
 	if err != nil {

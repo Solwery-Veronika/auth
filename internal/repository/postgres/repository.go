@@ -52,7 +52,10 @@ func (r *Repository) isUsernameTaken(ctx context.Context, username string) (bool
 func (r *Repository) updateUsername(ctx context.Context, userID int, newUsername string) error {
 	query := "UPDATE participants SET username = $1 WHERE id = $2"
 	_, err := r.conn.ExecContext(ctx, query, newUsername, userID)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
